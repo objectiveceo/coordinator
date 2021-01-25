@@ -2,7 +2,7 @@
   "name": "coordinator",
   "version": "1.0.0",
   "description": "Generic, simple website used for objectiveceo.com.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "test": "echo \"TODO: Testing\""
