@@ -1,0 +1,23 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        
+      - uses: actions/checkout@v2
+        with:
+          name: objectiveceo/devops
+          ref: refs/heads/main
+
+      - name: Run a multi-line script
+        run: |
+          echo TODO: more
+          pwd
+          ls
