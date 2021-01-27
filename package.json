@@ -6,6 +6,7 @@
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc --build tsconfig.json",
+    "dev": "nodemon --ext ts --watch src --exec \"npm run build && node .\"",
     "test": "echo \"TODO: Testing\""
   },
   "repository": {
