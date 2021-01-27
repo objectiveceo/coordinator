@@ -33,6 +33,7 @@ jobs:
           SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
 
-
       - name: Build and deploy
         run: __devops/bin/full-build-and-deploy.sh
+        env:
+          SSH_IMAGE_DESTINATION: staging:staging/
