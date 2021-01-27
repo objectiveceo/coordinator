@@ -34,9 +34,6 @@ jobs:
           SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
 
-      - name: Explain yourself!
-        run: "docker ps -a"
-
       - name: Build and deploy
         run: __devops/bin/full-build-and-deploy.sh
         env:
