@@ -4,7 +4,7 @@
   "description": "Generic, simple website used for objectiveceo.com.",
   "main": "dist/index.js",
   "scripts": {
-    "lint": "tslint -c tslint.json -p tsconfig.json --fix",
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc --build tsconfig.json",
     "test": "echo \"TODO: Testing\""
   },
