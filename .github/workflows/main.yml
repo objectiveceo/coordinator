@@ -41,3 +41,4 @@ jobs:
         env:
           OUTPUT_DIR: __build
           SSH_IMAGE_DESTINATION: staging:staging/
+          BUILD_NUMBER: ${{ github.run_number }}
