@@ -4,6 +4,7 @@ ENV NODE_ENV=production
 
 COPY ["package.json", "package-lock.json*", "./"]
 RUN npm install --production
+RUN npm run build
 
 COPY dist/ .
 CMD [ "node", "index.js" ]
