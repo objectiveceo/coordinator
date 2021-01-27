@@ -36,4 +36,5 @@ jobs:
       - name: Build and deploy
         run: __devops/bin/full-build-and-deploy.sh
         env:
+          OUTPUT_DIR: __build
           SSH_IMAGE_DESTINATION: staging:staging/
