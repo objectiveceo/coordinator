@@ -3,7 +3,6 @@ ARG build_number=local-docker-build
 FROM node:14.15.4-alpine3.10
 COPY ["package.json", "package-lock.json*", "tsconfig.json", "tslint.json", "./"]
 COPY ["src", "./src"]
-RUN ls
 RUN npm install
 RUN npm run build
 
