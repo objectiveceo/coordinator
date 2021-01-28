@@ -6,7 +6,27 @@ import { Database } from 'sqlite3';
 const markdown = new MarkdownIt()
 
 export function register(app: core.Application, database: Database) {
-	return app.get('/', (req, res) => buildIndex(database, req, res))
+	app.get('/', (req, res) => buildIndex(database, req, res))
+	app.get('/posts/:slug', (req, res) => buildPost(database, req, res))
+}
+
+function buildPost(database: Database, request: core.Request, response: core.Response) {
+	const slug = request.params.slug
+	database.get('SELECT template FROM templates WHERE key = ?', 'post', (error, row) => {
+		if (error) {
+			throw error
+		}
+
+		const template = row.template
+		database.get('SELECT title, contents FROM posts WHERE slug = ?', slug, (postError, postRow) => {
+			const view = {
+				...postRow,
+				contents: markdown.render(postRow.contents)
+			}
+			const output = Mustache.render(template, view)
+			response.send(output)
+		})
+	})
 }
 
 function buildIndex(database: Database, request: core.Request, response: core.Response) {
