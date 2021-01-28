@@ -5,7 +5,6 @@ export default class InMemoryBlog implements Blog {
 	fetchPosts(): BlogPost[] {
 		return [
 			new InMemoryBlogPost(),
-			new InMemoryBlogPost(),
 		]
 	}
 }
