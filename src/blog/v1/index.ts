@@ -1,11 +1,15 @@
 import core from 'express'
-import InMemoryBlog from '../../common/data/InMemoryBlog';
+import { Database } from 'sqlite3';
 
-export function register(app: core.Application) {
-	return app.get('/', buildIndex)
+export function register(app: core.Application, database: Database) {
+	return app.get('/', (req, res) => buildIndex(database, req, res))
 }
 
-function buildIndex(request: core.Request, response: core.Response) {
-	const blog = new InMemoryBlog()
-	response.send(blog.fetchPosts().map(x => `<p>${x.title}</p>`).join('\n'))
+function buildIndex(database: Database, request: core.Request, response: core.Response) {
+	database.get('SELECT template FROM templates WHERE key = ?', 'front-page', (error, row) => {
+		if (error) {
+			throw error
+		}
+		response.send(row.template)
+	})
 }

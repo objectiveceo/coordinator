@@ -25,4 +25,4 @@ app.listen(PORT, () => {
 })
 
 infoRegister(app)
-blogRegister(app)
+blogRegister(app, database)
