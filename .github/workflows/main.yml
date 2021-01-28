@@ -44,9 +44,9 @@ jobs:
       - name: Build and deploy
         run: __devops/bin/full-build-and-deploy.sh
         env:
-          ADDITIONAL_DOCKER_FLAGS: "--publish 8000:8000"
+          ADDITIONAL_DOCKER_FLAGS: "--publish 8000:8000 --volume ${{ secrets.DATA_DIRECTORY }}:/data"
           BUILD_NUMBER: ${{ github.run_number }}
-          DATABASE_PATH: ${{ secrets.DATABASE_PATH }}
+          DATABASE_PATH: /data/data.sqlite
           OUTPUT_DIR: __build
           SSH_IMAGE_DESTINATION: staging:staging/
           VERIFY_FILE: __verify
