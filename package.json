@@ -26,9 +26,11 @@
     "verbose": true
   },
   "dependencies": {
+    "@types/markdown-it": "^12.0.1",
     "@types/mustache": "^4.1.1",
     "@types/sqlite3": "^3.1.7",
     "express": "^4.17.1",
+    "markdown-it": "^12.0.4",
     "mustache": "^4.1.0",
     "sqlite3": "^5.0.1"
   },
