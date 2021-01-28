@@ -2,7 +2,7 @@ import core from 'express'
 import process from 'process'
 
 export function register(app: core.Application) {
-	return app.get('/api/v1/info', info);
+	return app.get('/api/v1/info', info)
 }
 
 const startup = new Date()
