@@ -11,6 +11,6 @@ function info(request: core.Request, response: core.Response) {
 	response.send({
 		startup,
 		NODE_ENV: process.env.NODE_ENV || 'local',
-		BUILD_NUMBER: process.env.BUILD_NUMBER || 'local',
+		BUILD_NUMBER: process.env.BUILD_NUMBER || '<none>',
 	})
 }
