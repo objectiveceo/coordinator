@@ -44,6 +44,7 @@ jobs:
       - name: Build and deploy
         run: __devops/bin/full-build-and-deploy.sh
         env:
+          ADDITIONAL_DOCKER_FLAGS: "--publish 8000:8000"
           OUTPUT_DIR: __build
           SSH_IMAGE_DESTINATION: staging:staging/
           BUILD_NUMBER: ${{ github.run_number }}
