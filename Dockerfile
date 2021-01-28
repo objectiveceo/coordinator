@@ -3,6 +3,7 @@ COPY ["package.json", "package-lock.json*", "tsconfig.json", "tslint.json", "./"
 COPY ["src", "./src"]
 RUN npm install
 RUN npm run build
+RUN npm test
 
 FROM node:14.15.4-alpine3.10
 ARG BUILD_NUMBER
