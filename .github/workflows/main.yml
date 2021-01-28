@@ -33,6 +33,13 @@ jobs:
           SSH_USER: ${{ secrets.STAGING_SSH_USER }}
           SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
           SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+    
+      - name: Configure verification file
+        run: |
+          cat >>__verify <<END
+            http://objectiveceo.com
+            http://objectiveceo.com/api/v1/info
+          END
 
       - name: Build and deploy
         run: __devops/bin/full-build-and-deploy.sh
@@ -40,3 +47,4 @@ jobs:
           OUTPUT_DIR: __build
           SSH_IMAGE_DESTINATION: staging:staging/
           BUILD_NUMBER: ${{ github.run_number }}
+          VERIFY_FILE: __verify
