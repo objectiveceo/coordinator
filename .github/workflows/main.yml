@@ -37,15 +37,15 @@ jobs:
       - name: Configure verification file
         run: |
           cat >>__verify <<END
-            http://objectiveceo.com
-            http://objectiveceo.com/api/v1/info
+          http://objectiveceo.com
+          http://objectiveceo.com/api/v1/info
           END
 
       - name: Build and deploy
         run: __devops/bin/full-build-and-deploy.sh
         env:
           ADDITIONAL_DOCKER_FLAGS: "--publish 8000:8000"
+          BUILD_NUMBER: ${{ github.run_number }}
           OUTPUT_DIR: __build
           SSH_IMAGE_DESTINATION: staging:staging/
-          BUILD_NUMBER: ${{ github.run_number }}
           VERIFY_FILE: __verify
