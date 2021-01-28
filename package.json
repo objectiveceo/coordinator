@@ -7,7 +7,7 @@
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc --build tsconfig.json",
     "dev": "nodemon --ext ts --watch src --exec \"npm run build && node .\"",
-    "test": "jest"
+    "test": "jest --collect-coverage"
   },
   "repository": {
     "type": "git",
@@ -20,8 +20,7 @@
   },
   "homepage": "https://github.com/objectiveceo/coordinator#readme",
   "jest": {
-    "testMatch": ["**/tests/**/*.ts"],
-    "transform": {"\\.[jt]sx?$": "babel-jest"},
+    "transform": {"\\.[jt]sx?$": "ts-jest"},
     "verbose": true
   },
   "dependencies": {
