@@ -26,7 +26,7 @@ export default class DatabaseBlogRepository implements Blog {
 					.setSlug(slug)
 					.setTitle(row.title)
 					.setContent(row.contents)
-					
+
 				resolve(BlogPost.from(builder.data))
 			})
 		})
