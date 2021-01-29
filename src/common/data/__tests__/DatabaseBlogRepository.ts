@@ -5,7 +5,24 @@ import { report } from 'process';
 describe('DatabaseBlogRepostory', () => {
 	const db = createDatabase()
 	db.serialize(() => tests(db))
+
+	const emptyDb = createDatabase()
+	db.serialize(() => emptyDataTests(emptyDb))
 })
+
+function emptyDataTests(db: Database) {
+	const repo = new DatabaseBlogRepository(db)
+
+	test('fetch posts', async () => {
+		const posts = await repo.fetchPosts()
+		expect(posts.length).toBe(0)
+	})
+
+	test('fetch post', async () => {
+		const post = await repo.fetchPost('<missing>')
+		expect(post).toBeNull()
+	})
+}
 
 function tests(db: Database) {
 	db.run(`INSERT INTO
