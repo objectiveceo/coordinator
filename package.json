@@ -6,6 +6,7 @@
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc --build tsconfig.json",
+    "predev": "./bin/predev.sh",
     "dev": "nodemon --ext ts --watch src --exec \"npm run build && node .\"",
     "test": "jest"
   },
@@ -39,6 +40,7 @@
     "@types/express": "^4.17.11",
     "@types/jest": "^26.0.20",
     "@types/node": "^14.14.22",
+    "dotenv": "^8.2.0",
     "jest": "^26.6.3",
     "nodemon": "^2.0.7",
     "ts-jest": "^26.4.4",
