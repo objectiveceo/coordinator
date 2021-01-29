@@ -1,9 +1,12 @@
+import dotenv from 'dotenv'
 import express from 'express'
 import fs from 'fs'
 import process from 'process'
 import sqlite3 from 'sqlite3'
 import { register as infoRegister } from './api/v1/info'
 import { register as blogRegister } from './blog/v1/index'
+
+dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 8000
