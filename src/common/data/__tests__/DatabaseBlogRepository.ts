@@ -1,6 +1,5 @@
 import DatabaseBlogRepository from '../DatabaseBlogRepository'
 import { Database } from "sqlite3";
-import { report } from 'process';
 
 describe('DatabaseBlogRepostory', () => {
 	const db = createDatabase()
