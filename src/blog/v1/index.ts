@@ -2,52 +2,48 @@ import core from 'express'
 import MarkdownIt from 'markdown-it'
 import Mustache from 'mustache'
 import { Database } from 'sqlite3';
+import { Blog } from '../../common/data';
 
 const markdown = new MarkdownIt()
 
-export function register(app: core.Application, database: Database) {
-	app.get('/', (req, res) => buildIndex(database, req, res))
-	app.get('/posts/:slug', (req, res) => buildPost(database, req, res))
+export function register(app: core.Application, database: Database, repository: Blog) {
+	app.get('/', (req, res) => buildIndex(database, repository, req, res))
+	app.get('/posts/:slug', (req, res) => buildPost(database, repository, req, res))
 }
 
-function buildPost(database: Database, request: core.Request, response: core.Response) {
-	const slug = request.params.slug
+async function buildPost(database: Database, repository: Blog, request: core.Request, response: core.Response) {
+	const post = await repository.fetchPost(request.params.slug)
+	if (!post) {
+		response.status(404)
+		return
+	}
+
 	database.get('SELECT template FROM templates WHERE key = ?', 'post', (error, row) => {
 		if (error) {
 			throw error
 		}
 
-		const template = row.template
-		database.get('SELECT title, contents FROM posts WHERE slug = ?', slug, (postError, postRow) => {
-			const view = {
-				...postRow,
-				contents: markdown.render(postRow.contents)
-			}
-			const output = Mustache.render(template, view)
-			response.send(output)
-		})
+		const view = {
+			...post,
+			contents: markdown.render(post.content)
+		}
+		const output = Mustache.render(row.template, view)
+		response.send(output)
 	})
 }
 
-function buildIndex(database: Database, request: core.Request, response: core.Response) {
+async function buildIndex(database: Database, repository: Blog, request: core.Request, response: core.Response) {
+	const posts = (await repository.fetchPosts()).map(x => ({
+		slug: x.slug,
+		title: markdown.renderInline(x.title)}
+	))
+
 	database.get('SELECT template FROM templates WHERE key = ?', 'front-page', (error, row) => {
 		if (error) {
 			throw error
 		}
 
-		const template = row.template
-
-		database.all('SELECT title, slug FROM posts ORDER BY date_created DESC;', (postError, rows) => {
-			if (postError) {
-				throw postError
-			}
-
-			const posts = rows.map(x => ({
-				slug: x.slug,
-				title: markdown.renderInline(x.title)}
-			))
-			const output = Mustache.render(row.template, { posts })
-			response.send(output)
-		})
+		const output = Mustache.render(row.template, { posts })
+		response.send(output)
 	})
 }

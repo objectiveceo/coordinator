@@ -1,7 +1,8 @@
-export interface BlogPost {
-	title: string
+import BlogPost from "./BlogPost"
+
+interface Blog {
+	fetchPosts(): Promise<BlogPost[]>
+	fetchPost(slug: string): Promise<BlogPost | null>
 }
 
-export interface Blog {
-	fetchPosts(): BlogPost[]
-}
+export { Blog, BlogPost }

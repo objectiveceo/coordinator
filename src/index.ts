@@ -5,6 +5,7 @@ import process from 'process'
 import sqlite3 from 'sqlite3'
 import { register as infoRegister } from './api/v1/info'
 import { register as blogRegister } from './blog/v1/index'
+import DatabaseBlogRepository from './common/data/DatabaseBlogRepository'
 
 dotenv.config()
 
@@ -22,10 +23,12 @@ const database = new sqlite3.Database(DATABASE_PATH, error => {
 	}
 })
 
+const blogRepository = new DatabaseBlogRepository(database)
+
 app.listen(PORT, () => {
 	// tslint:disable-next-line:no-console
 	console.log(`Open http://localhost:${PORT}`)
 })
 
 infoRegister(app)
-blogRegister(app, database)
+blogRegister(app, database, blogRepository)
