@@ -8,25 +8,27 @@ const markdown = new MarkdownIt()
 
 export function register(app: core.Application, database: Database, repository: Blog) {
 	app.get('/', (req, res) => buildIndex(database, repository, req, res))
-	app.get('/posts/:slug', (req, res) => buildPost(database, req, res))
+	app.get('/posts/:slug', (req, res) => buildPost(database, repository, req, res))
 }
 
-function buildPost(database: Database, request: core.Request, response: core.Response) {
-	const slug = request.params.slug
+async function buildPost(database: Database, repository: Blog, request: core.Request, response: core.Response) {
+	const post = await repository.fetchPost(request.params.slug)
+	if (!post) {
+		response.status(404)
+		return
+	}
+
 	database.get('SELECT template FROM templates WHERE key = ?', 'post', (error, row) => {
 		if (error) {
 			throw error
 		}
 
-		const template = row.template
-		database.get('SELECT title, contents FROM posts WHERE slug = ?', slug, (postError, postRow) => {
-			const view = {
-				...postRow,
-				contents: markdown.render(postRow.contents)
-			}
-			const output = Mustache.render(template, view)
-			response.send(output)
-		})
+		const view = {
+			...post,
+			contents: markdown.render(post.content)
+		}
+		const output = Mustache.render(row.template, view)
+		response.send(output)
 	})
 }
 
