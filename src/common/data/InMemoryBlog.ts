@@ -1,10 +1,10 @@
-import { Blog, BlogPost } from './index'
-import InMemoryBlogPost from './InMemoryBlogPost'
+import { Blog } from './index'
+import BlogPost from "./BlogPost"
 
 export default class InMemoryBlog implements Blog {
 	fetchPosts(): Promise<BlogPost[]> {
 		return Promise.resolve([
-			new InMemoryBlogPost(),
+			new BlogPost("something is coming"),
 		])
 	}
 }
