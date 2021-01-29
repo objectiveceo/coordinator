@@ -9,6 +9,29 @@ export default class DatabaseBlogRepository implements Blog {
 		this.database = database
 	}
 
+	fetchPost(slug: string): Promise<BlogPost | null> {
+		return new Promise( (resolve, reject) => {
+			this.database.get('SELECT title, contents FROM posts WHERE slug = ?', slug, (error, row) => {
+				if (error) {
+					reject(error)
+					return
+				}
+
+				if (!row) {
+					resolve(null)
+					return
+				}
+
+				const builder = new BlogPostBuilder({})
+					.setSlug(slug)
+					.setTitle(row.title)
+					.setContent(row.contents)
+					
+				resolve(BlogPost.from(builder.data))
+			})
+		})
+	}
+
 	fetchPosts(): Promise<BlogPost[]> {
 		return new Promise( (resolve, reject) => {
 			this.database.all('SELECT title, slug, contents FROM posts ORDER BY date_created DESC;', (error, rows) => {

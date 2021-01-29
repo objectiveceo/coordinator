@@ -1,5 +1,6 @@
 import DatabaseBlogRepository from '../DatabaseBlogRepository'
 import { Database } from "sqlite3";
+import { report } from 'process';
 
 describe('DatabaseBlogRepostory', () => {
 	const db = createDatabase()
@@ -16,6 +17,16 @@ function tests(db: Database) {
 	test('fetch posts', async () => {
 		const posts = await repo.fetchPosts()
 		expect(posts.length).toBe(1)
+	})
+
+	test('fetch post by slug', async () => {
+		const post = await repo.fetchPost('test-slug')
+		expect(post!.title).toBe('test title')
+	})
+
+	test('fetch missing post', async () => {
+		const post = await repo.fetchPost('<missing>')
+		expect(post).toBeNull()
 	})
 }
 
