@@ -3,5 +3,5 @@ export interface BlogPost {
 }
 
 export interface Blog {
-	fetchPosts(): BlogPost[]
+	fetchPosts(): Promise<BlogPost[]>
 }
