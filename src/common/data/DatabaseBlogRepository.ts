@@ -11,16 +11,17 @@ export default class DatabaseBlogRepository implements Blog {
 
 	fetchPosts(): Promise<BlogPost[]> {
 		return new Promise( (resolve, reject) => {
-			this.database.all('SELECT title, slug FROM posts ORDER BY date_created DESC;', (error, rows) => {
+			this.database.all('SELECT title, slug, contents FROM posts ORDER BY date_created DESC;', (error, rows) => {
 				if (error) {
 					reject(error)
 					return
 				}
 
-				const posts = rows.map((row: { title: string; slug: string }) => {
+				const posts = rows.map((row: { title: string; slug: string; contents: string }) => {
 					const builder = new BlogPostBuilder({})
 						.setTitle(row.title)
 						.setSlug(row.slug)
+						.setContent(row.contents)
 					return BlogPost.from(builder.data)
 				})
 				resolve(posts)

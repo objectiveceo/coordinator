@@ -1,4 +1,4 @@
-import { HasTitle, HasSlug } from "./BlogPost";
+import { HasTitle, HasSlug, HasContent } from "./BlogPost";
 
 export class BlogPostBuilder<T> {
 	data: { [key: string]: any; } & T;
@@ -19,5 +19,12 @@ export class BlogPostBuilder<T> {
 			...this.data,
 			slug
 		});
+	}
+
+	setContent(content: string): BlogPostBuilder<T & HasContent> {
+		return new BlogPostBuilder({
+			...this.data,
+			content
+		})
 	}
 }
