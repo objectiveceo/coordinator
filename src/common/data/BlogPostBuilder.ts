@@ -1,5 +1,6 @@
-import { BlogPost } from ".";
+import { Blog, BlogPost } from ".";
 import {
+	HasAbstract,
 	HasContent,
 	HasCreationDate,
 	HasSlug,
@@ -11,6 +12,13 @@ export class BlogPostBuilder<T> {
 
 	constructor(data: T) {
 		this.data = data;
+	}
+
+	setAbstract(abstract: string): BlogPostBuilder<T & HasAbstract> {
+		return new BlogPostBuilder({
+			...this.data,
+			abstract
+		})
 	}
 
 	setContent(content: string): BlogPostBuilder<T & HasContent> {
