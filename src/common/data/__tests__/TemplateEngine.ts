@@ -29,7 +29,7 @@ function tests(db: Database) {
 
 	const creationDate = new Date('2021-01-28 12:48:57')
 
-	test('generate template', async () => {
+	test('generate blog post', async () => {
 		const engine = await TemplateEngine.initialize(db)
 		const post = BlogPost.from(new BlogPostBuilder({})
 			.setAbstract('abstract')
@@ -41,6 +41,19 @@ function tests(db: Database) {
 		expect(engine.generateBlogPost(post))
 			.toMatch(/<head>\*title\*\n<em>title<\/em>\n<h1>content<\/h1>\n\n\d{4}-\d{2}-\d{2}T.*Z\n<foot>/)
 	})
+
+	test('generate other blog post', async () => {
+		const engine = await TemplateEngine.initialize(db)
+		const post = BlogPost.from(new BlogPostBuilder({})
+			.setAbstract('other_abstract')
+			.setContent('# other_content')
+			.setCreationDate(creationDate)
+			.setSlug('other_slug')
+			.setTitle('*other_title*')
+			.data)
+		expect(engine.generateBlogPost(post))
+			.toMatch(/<head>\*other_title\*\n<em>other_title<\/em>\n<h1>other_content<\/h1>\n\n\d{4}-\d{2}-\d{2}T.*Z\n<foot>/)
+	});
 }
 
 function partiallyFilledTests(db: Database) {
