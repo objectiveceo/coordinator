@@ -43,7 +43,7 @@ export default class TemplateEngine {
 	private lookupPartial(name: string): string {
 		const partial = this.templates[name]
 		if (!partial) {
-			throw `Missing template partial ${name}`
+			throw new Error(`Missing template partial ${name}`)
 		}
 		return partial
 	}
