@@ -28,7 +28,8 @@ export default class TemplateEngine {
 
 		const view = {
 			...post,
-			contents: markdown.render(post.content)
+			html_content: markdown.render(post.content),
+			html_title: markdown.renderInline(post.title),
 		}
 		return Mustache.render(template, view, this.lookupPartial)
 	}
