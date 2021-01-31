@@ -26,7 +26,11 @@ function configureNGINX {
 	local lineCount="$(echo "${containers}" | wc -l)"
 	if [[ $lineCount -eq 1 ]]; then
 		echo "Creating container named ${expectedContainerName}"
-		docker create --name "$expectedContainerName" --publish 80:80 nginx:alpine
+		docker create \
+			--name "$expectedContainerName" \
+			--publish 80:80 \
+			--volume "$(pwd)/static/":"/static/" \
+			nginx:alpine
 	fi
 
 	docker ps --filter status=running | grep "$expectedContainerName" > /dev/null
