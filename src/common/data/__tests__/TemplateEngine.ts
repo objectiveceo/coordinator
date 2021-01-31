@@ -4,6 +4,9 @@ import { BlogPost } from '..';
 import { BlogPostBuilder } from '../BlogPostBuilder';
 
 describe('TemplateEngine', () => {
+	const db = new Database(':memory:')
+	db.serialize(() => tests(setup(db)))
+
 	const emptyDb = new Database(':memory:')
 	emptyDb.serialize(() => emptyDataTests(setup(emptyDb)))
 
@@ -11,7 +14,36 @@ describe('TemplateEngine', () => {
 	partiallyFilledDb.serialize(() => partiallyFilledTests(setup(partiallyFilledDb)))
 })
 
-function partiallyFilledTests(db: Database) {db.run(`INSERT INTO templates (key, template) VALUES ('post', '{{>head}} test');`)		
+function tests(db: Database) {
+	const postTemplate = `{{>head}}
+{{formatted_date}}
+{{title}}
+{{body}}
+{{>foot}}`
+
+	db.run(`INSERT INTO templates (key, template) VALUES
+		('post', ?),
+		('head', '<head>{{#subtitle}}{{value}}{{/subtitle}}'),
+		('foot', '<foot>');`, postTemplate)
+
+	test('generate template', async () => {
+		const engine = await TemplateEngine.initialize(db)
+		expect(engine.generateBlogPost(basicBlogPost))
+			.toBe('caput test pes')
+	})
+
+	test('does markdown', async () => {
+		const engine = await TemplateEngine.initialize(db)
+		const post = BlogPost.from(new BlogPostBuilder({})
+			.setContent('# content')
+			.setSlug('slug')
+			.setTitle('*title*')
+			.data)
+		expect(engine.generateBlogPost(basicBlogPost))
+			.toBe('caput test pes')
+	})
+}
+
 function partiallyFilledTests(db: Database) {
 	db.run(`INSERT INTO templates (key, template) VALUES ('post', '{{>head}} test');`)
 	test('fetch formatting head template', async () => {
