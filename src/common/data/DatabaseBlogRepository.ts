@@ -26,7 +26,7 @@ export default class DatabaseBlogRepository implements Blog {
 					.setSlug(slug)
 					.setTitle(row.title)
 					.setContent(row.contents)
-					.setCreationDate(row.creationDate)
+					.setCreationDate(new Date(`${row.date_created} UTC`))
 
 				resolve(BlogPost.from(builder.data))
 			})
