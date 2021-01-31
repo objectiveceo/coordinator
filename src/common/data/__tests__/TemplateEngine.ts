@@ -19,6 +19,7 @@ function tests(db: Database) {
 
 {{&html_title}}
 {{&html_content}}
+{{&creation_date_iso}}
 {{>foot}}`
 
 	db.run(`INSERT INTO templates (key, template) VALUES
@@ -26,7 +27,7 @@ function tests(db: Database) {
 		('head', '<head>{{#title}}{{.}}{{/title}}'),
 		('foot', '<foot>');`, postTemplate)
 
-	const creationDate = new Date()
+	const creationDate = new Date('2021-01-28 12:48:57')
 
 	test('generate template', async () => {
 		const engine = await TemplateEngine.initialize(db)
@@ -37,7 +38,7 @@ function tests(db: Database) {
 			.setTitle('*title*')
 			.data)
 		expect(engine.generateBlogPost(post))
-			.toBe('<head>*title*\n<em>title</em>\n<h1>content</h1>\n\n<foot>')
+			.toBe('<head>*title*\n<em>title</em>\n<h1>content</h1>\n\n2021-01-28T17:48:57.000Z\n<foot>')
 	})
 }
 

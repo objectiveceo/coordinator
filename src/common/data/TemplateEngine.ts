@@ -28,6 +28,7 @@ export default class TemplateEngine {
 
 		const view = {
 			...post,
+			creation_date_iso: post.creationDate.toISOString(),
 			html_content: markdown.render(post.content),
 			html_title: markdown.renderInline(post.title),
 		}

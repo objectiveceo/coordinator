@@ -43,14 +43,14 @@ export default class DatabaseBlogRepository implements Blog {
 
 				type RowType = {
 					contents: string,
-					creation_date: string
+					date_created: string
 					slug: string;
 					title: string;
 				}
 				const posts = rows.map((row: RowType) => {
 					const builder = new BlogPostBuilder({})
 						.setContent(row.contents)
-						.setCreationDate(new Date(`${row.creation_date} UTC`))
+						.setCreationDate(new Date(`${row.date_created} UTC`))
 						.setSlug(row.slug)
 						.setTitle(row.title)
 					return BlogPost.from(builder.data)
