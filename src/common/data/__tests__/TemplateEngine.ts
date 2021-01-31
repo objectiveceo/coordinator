@@ -38,7 +38,7 @@ function tests(db: Database) {
 			.setTitle('*title*')
 			.data)
 		expect(engine.generateBlogPost(post))
-			.toBe('<head>*title*\n<em>title</em>\n<h1>content</h1>\n\n2021-01-28T17:48:57.000Z\n<foot>')
+			.toMatch(/<head>\*title\*\n<em>title<\/em>\n<h1>content<\/h1>\n\n\d{4}-\d{2}-\d{2}T.*Z\n<foot>/)
 	})
 }
 
