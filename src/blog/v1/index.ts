@@ -1,11 +1,6 @@
 import core from 'express'
-import MarkdownIt from 'markdown-it'
-import Mustache from 'mustache'
-import { Database } from 'sqlite3';
 import { Blog } from '../../common/data';
 import TemplateEngine from '../../common/data/TemplateEngine';
-
-const markdown = new MarkdownIt()
 
 export function register(app: core.Application, repository: Blog, templateEngine: TemplateEngine) {
 	app.get('/', (req, res) => buildIndex(templateEngine, repository, req, res))
