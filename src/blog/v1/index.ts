@@ -5,6 +5,7 @@ import TemplateEngine from '../../common/data/TemplateEngine';
 export function register(app: core.Application, repository: Blog, templateEngine: TemplateEngine) {
 	app.get('/', (req, res) => buildIndex(templateEngine, repository, req, res))
 	app.get('/posts/:slug', (req, res) => buildPost(templateEngine, repository, req, res))
+	app.get('/posts/:slug.md$', (req, res) => fetchMarkdown(repository, req, res))
 }
 
 async function buildPost(templateEngine: TemplateEngine, repository: Blog, request: core.Request, response: core.Response) {
@@ -18,4 +19,13 @@ async function buildPost(templateEngine: TemplateEngine, repository: Blog, reque
 
 async function buildIndex(templateEngine: TemplateEngine, repository: Blog, request: core.Request, response: core.Response) {
 	response.send(await templateEngine.generateFrontPage(repository))
+}
+
+async function fetchMarkdown(repository: Blog, request: core.Request, response: core.Response) {
+	const post = await repository.fetchPost(request.params.slug)
+	if (!post) {
+		response.status(404)
+		return
+	}
+	response.send(post.content)
 }
