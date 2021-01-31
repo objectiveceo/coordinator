@@ -27,5 +27,6 @@ async function fetchMarkdown(repository: Blog, request: core.Request, response: 
 		response.status(404)
 		return
 	}
+	response.type('text/plain')
 	response.send(post.content)
 }
