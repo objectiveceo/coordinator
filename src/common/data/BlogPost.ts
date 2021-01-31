@@ -6,18 +6,19 @@ export interface HasTitle { title: string }
 type HasAllFields = HasContent & HasCreationDate & HasSlug & HasTitle
 
 export default class BlogPost {
-	builder: HasAllFields
+	title: string;
+	slug: string;
+	content: string;
+	creationDate: Date;
 
 	public static from(builder: HasAllFields) {
 		return new BlogPost(builder)
 	}
 
-	get content(): string { return this.builder.content }
-	get creationDate(): Date { return this.builder.creationDate }
-	get slug(): string { return this.builder.slug }
-	get title(): string { return this.builder.title }
-
 	private constructor(builder: HasAllFields) {
-		this.builder = builder
+		this.title = builder.title;
+		this.slug = builder.slug;
+		this.content = builder.content
+		this.creationDate = builder.creationDate
 	}
 }
