@@ -1,7 +1,7 @@
 import MarkdownIt from "markdown-it/lib"
 import Mustache from "mustache"
 import { Database } from "sqlite3"
-import { BlogPost } from "."
+import { Blog, BlogPost } from "."
 
 type Templates = {[key: string]: string}
 
@@ -9,6 +9,7 @@ enum TemplateKey {
 	Post = 'post',
 	Head = 'head',
 	Foot = 'foot',
+	FrontPage = 'front-page',
 }
 
 const markdown = new MarkdownIt()
@@ -33,6 +34,20 @@ export default class TemplateEngine {
 			html_title: markdown.renderInline(post.title),
 		}
 		return Mustache.render(template, view, this.lookupPartial)
+	}
+
+	async generateFrontPage(blog: Blog): Promise<string> {
+		const template = this.templates[TemplateKey.FrontPage]
+		if (!template) {
+			throw new Error(`Unable to find template with key ${TemplateKey.Post}`)
+		}
+
+		const posts = (await blog.fetchPosts()).map(x => ({
+			...x,
+			html_title: markdown.renderInline(x.title)}
+		))
+
+		return Mustache.render(template, { posts }, this.lookupPartial)
 	}
 
 	private constructor(templates: Templates) {
