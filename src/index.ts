@@ -6,6 +6,7 @@ import sqlite3 from 'sqlite3'
 import { register as infoRegister } from './api/v1/info'
 import { register as blogRegister } from './blog/v1/index'
 import DatabaseBlogRepository from './common/data/DatabaseBlogRepository'
+import TemplateEngine from './common/data/TemplateEngine'
 
 dotenv.config()
 
@@ -30,5 +31,7 @@ app.listen(PORT, () => {
 	console.log(`Open http://localhost:${PORT}`)
 })
 
-infoRegister(app)
-blogRegister(app, database, blogRepository)
+TemplateEngine.initialize(database).then(templateEngine => {
+	infoRegister(app)
+	blogRegister(app, database, blogRepository, templateEngine)
+})

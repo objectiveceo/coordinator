@@ -6,7 +6,7 @@ describe('DatabaseBlogRepostory', () => {
 	db.serialize(() => tests(db))
 
 	const emptyDb = createDatabase()
-	db.serialize(() => emptyDataTests(emptyDb))
+	emptyDb.serialize(() => emptyDataTests(emptyDb))
 })
 
 function emptyDataTests(db: Database) {
