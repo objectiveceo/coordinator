@@ -33,5 +33,5 @@ app.listen(PORT, () => {
 
 TemplateEngine.initialize(database).then(templateEngine => {
 	infoRegister(app)
-	blogRegister(app, database, blogRepository, templateEngine)
+	blogRegister(app, blogRepository, templateEngine)
 })
