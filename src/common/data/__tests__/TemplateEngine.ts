@@ -32,6 +32,7 @@ function tests(db: Database) {
 	test('generate template', async () => {
 		const engine = await TemplateEngine.initialize(db)
 		const post = BlogPost.from(new BlogPostBuilder({})
+			.setAbstract('abstract')
 			.setContent('# content')
 			.setCreationDate(creationDate)
 			.setSlug('slug')
@@ -60,6 +61,7 @@ function emptyDataTests(db: Database) {
 }
 
 const basicBlogPost = BlogPost.from(new BlogPostBuilder({})
+	.setAbstract('abstract')
 	.setCreationDate(new Date())
 	.setContent('content')
 	.setSlug('slug')
