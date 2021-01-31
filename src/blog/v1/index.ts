@@ -4,8 +4,8 @@ import TemplateEngine from '../../common/data/TemplateEngine';
 
 export function register(app: core.Application, repository: Blog, templateEngine: TemplateEngine) {
 	app.get('/', (req, res) => buildIndex(templateEngine, repository, req, res))
-	app.get('/posts/:slug', (req, res) => buildPost(templateEngine, repository, req, res))
 	app.get('/posts/:slug.md$', (req, res) => fetchMarkdown(repository, req, res))
+	app.get('/posts/:slug', (req, res) => buildPost(templateEngine, repository, req, res))
 }
 
 async function buildPost(templateEngine: TemplateEngine, repository: Blog, request: core.Request, response: core.Response) {
