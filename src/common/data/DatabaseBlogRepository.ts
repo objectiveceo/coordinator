@@ -11,7 +11,7 @@ export default class DatabaseBlogRepository implements Blog {
 
 	fetchPost(slug: string): Promise<BlogPost | null> {
 		return new Promise( (resolve, reject) => {
-			this.database.get('SELECT title, contents, date_created FROM posts WHERE slug = ?', slug, (error, row) => {
+			this.database.get('SELECT title, contents, date_created, abstract FROM posts WHERE slug = ?', slug, (error, row) => {
 				if (error) {
 					reject(error)
 					return
@@ -27,6 +27,7 @@ export default class DatabaseBlogRepository implements Blog {
 					.setTitle(row.title)
 					.setContent(row.contents)
 					.setCreationDate(new Date(`${row.date_created} UTC`))
+					.setAbstract(row.abstract)
 
 				resolve(BlogPost.from(builder.data))
 			})
@@ -35,13 +36,14 @@ export default class DatabaseBlogRepository implements Blog {
 
 	fetchPosts(): Promise<BlogPost[]> {
 		return new Promise( (resolve, reject) => {
-			this.database.all('SELECT title, slug, contents, date_created FROM posts ORDER BY date_created DESC;', (error, rows) => {
+			this.database.all('SELECT title, slug, contents, date_created, abstract FROM posts ORDER BY date_created DESC;', (error, rows) => {
 				if (error) {
 					reject(error)
 					return
 				}
 
 				type RowType = {
+					abstract: string,
 					contents: string,
 					date_created: string
 					slug: string;
@@ -49,6 +51,7 @@ export default class DatabaseBlogRepository implements Blog {
 				}
 				const posts = rows.map((row: RowType) => {
 					const builder = new BlogPostBuilder({})
+						.setAbstract(row.abstract)
 						.setContent(row.contents)
 						.setCreationDate(new Date(`${row.date_created} UTC`))
 						.setSlug(row.slug)
