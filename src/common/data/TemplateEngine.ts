@@ -44,6 +44,7 @@ export default class TemplateEngine {
 
 		const posts = (await blog.fetchPosts()).map(x => ({
 			...x,
+			html_abstract: markdown.renderInline(x.abstract),
 			html_title: markdown.renderInline(x.title)}
 		))
 
