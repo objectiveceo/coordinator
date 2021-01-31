@@ -1,4 +1,10 @@
-import { HasTitle, HasSlug, HasContent } from "./BlogPost";
+import { BlogPost } from ".";
+import {
+	HasContent,
+	HasCreationDate,
+	HasSlug,
+	HasTitle,
+} from "./BlogPost";
 
 export class BlogPostBuilder<T> {
 	data: { [key: string]: any; } & T;
@@ -7,11 +13,18 @@ export class BlogPostBuilder<T> {
 		this.data = data;
 	}
 
-	setTitle(title: string): BlogPostBuilder<T & HasTitle> {
+	setContent(content: string): BlogPostBuilder<T & HasContent> {
 		return new BlogPostBuilder({
 			...this.data,
-			title
-		});
+			content
+		})
+	}
+
+	setCreationDate(creationDate: Date): BlogPostBuilder<T & HasCreationDate> {
+		return new BlogPostBuilder({
+			...this.data,
+			creationDate
+		})
 	}
 
 	setSlug(slug: string): BlogPostBuilder<T & HasSlug> {
@@ -21,10 +34,10 @@ export class BlogPostBuilder<T> {
 		});
 	}
 
-	setContent(content: string): BlogPostBuilder<T & HasContent> {
+	setTitle(title: string): BlogPostBuilder<T & HasTitle> {
 		return new BlogPostBuilder({
 			...this.data,
-			content
-		})
+			title
+		});
 	}
 }

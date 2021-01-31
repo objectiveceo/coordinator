@@ -26,10 +26,13 @@ function tests(db: Database) {
 		('head', '<head>{{#title}}{{.}}{{/title}}'),
 		('foot', '<foot>');`, postTemplate)
 
+	const creationDate = new Date()
+
 	test('generate template', async () => {
 		const engine = await TemplateEngine.initialize(db)
 		const post = BlogPost.from(new BlogPostBuilder({})
 			.setContent('# content')
+			.setCreationDate(creationDate)
 			.setSlug('slug')
 			.setTitle('*title*')
 			.data)
@@ -56,6 +59,7 @@ function emptyDataTests(db: Database) {
 }
 
 const basicBlogPost = BlogPost.from(new BlogPostBuilder({})
+	.setCreationDate(new Date())
 	.setContent('content')
 	.setSlug('slug')
 	.setTitle('title')

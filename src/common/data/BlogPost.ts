@@ -1,8 +1,9 @@
-export interface HasTitle { title: string }
-export interface HasSlug { slug: string }
 export interface HasContent { content: string }
+export interface HasCreationDate { creationDate: Date }
+export interface HasSlug { slug: string }
+export interface HasTitle { title: string }
 
-type HasAllFields = HasSlug & HasTitle & HasContent
+type HasAllFields = HasContent & HasCreationDate & HasSlug & HasTitle
 
 export default class BlogPost {
 	title: string;
