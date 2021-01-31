@@ -16,31 +16,25 @@ describe('TemplateEngine', () => {
 
 function tests(db: Database) {
 	const postTemplate = `{{>head}}
-{{formatted_date}}
-{{title}}
-{{body}}
+
+{{&html_title}}
+{{&html_content}}
 {{>foot}}`
 
 	db.run(`INSERT INTO templates (key, template) VALUES
 		('post', ?),
-		('head', '<head>{{#subtitle}}{{value}}{{/subtitle}}'),
+		('head', '<head>{{#title}}{{.}}{{/title}}'),
 		('foot', '<foot>');`, postTemplate)
 
 	test('generate template', async () => {
-		const engine = await TemplateEngine.initialize(db)
-		expect(engine.generateBlogPost(basicBlogPost))
-			.toBe('caput test pes')
-	})
-
-	test('does markdown', async () => {
 		const engine = await TemplateEngine.initialize(db)
 		const post = BlogPost.from(new BlogPostBuilder({})
 			.setContent('# content')
 			.setSlug('slug')
 			.setTitle('*title*')
 			.data)
-		expect(engine.generateBlogPost(basicBlogPost))
-			.toBe('caput test pes')
+		expect(engine.generateBlogPost(post))
+			.toBe('<head>*title*\n<em>title</em>\n<h1>content</h1>\n\n<foot>')
 	})
 }
 
