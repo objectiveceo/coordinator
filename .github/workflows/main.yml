@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
         
       - uses: actions/checkout@v2
         with:
@@ -50,3 +52,6 @@ jobs:
           OUTPUT_DIR: __build
           SSH_IMAGE_DESTINATION: staging:staging/
           VERIFY_FILE: __verify
+      
+      - name: Sync static folder
+        run: rsync --archive static --exclude ".*" objceo:/objectiveceo/static/
