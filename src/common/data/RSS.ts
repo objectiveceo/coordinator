@@ -24,6 +24,7 @@ export interface Options {
 }
 
 export interface FeedGenerator {
+	atom1: () => string
 	json1: () => string
 	rss2: () => string
 
