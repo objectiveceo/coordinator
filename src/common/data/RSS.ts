@@ -1,3 +1,4 @@
+import MarkdownIt from "markdown-it/lib"
 import { Blog, BlogPost } from '.'
 import { Feed, Item } from 'feed'
 
@@ -51,9 +52,11 @@ export default async function generate(info: BlogInfo, blog: Blog): Promise<Feed
 	return feed
 }
 
+const markdown = new MarkdownIt()
+
 function map(post: BlogPost, linkGenerator: LinkGenerator): Item {
 	return {
-		content: post.content,
+		content: markdown.render(post.content),
 		date: post.creationDate,
 		link: linkGenerator(post),
 		title: post.title,

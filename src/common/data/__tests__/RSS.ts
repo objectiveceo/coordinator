@@ -17,7 +17,7 @@ describe('RSS', () => {
 		expect(item.title).toBe('post-title')
 		expect(item.date).toBe(testDate)
 		expect(item.link).toBe('base/post-slug')
-		expect(item.content).toBe('post-content')
+		expect(item.content).toBe('<p>post-content</p>\n')
 	})
 })
 
