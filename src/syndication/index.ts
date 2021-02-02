@@ -12,11 +12,14 @@ async function syndicate(info: BlogInfo, repository: Blog, request: core.Request
 		case 'atom':
 			response.type('application/atom+xml')
 			response.send(feed.atom1())
+			break
 		case 'json':
 			response.type('application/json')
 			response.send(feed.json1())
+			break
 		case 'rss':
 			response.type('application/rss+xml')
 			response.send(feed.rss2())
+			break
 	}
 }
