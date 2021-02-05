@@ -54,4 +54,4 @@ jobs:
           VERIFY_FILE: __verify
       
       - name: Sync static folder
-        run: rsync --archive static --exclude ".*" staging:/objectiveceo/static/
+        run: rsync --archive static --exclude ".*" staging:~/objectiveceo/static/
