@@ -4,6 +4,13 @@ import UserStorage from '../userstorage'
 describe('DbUser tests', () => {
 	const db = createDatabase()
 
+	test('create salt if nonexistent', async () => {
+		const storage = await UserStorage.create(db)
+		db.get('SELECT value FROM _meta WHERE key = ?', 'user_salt', (error, row) => {
+			expect(row.value).not.toBeNull()
+		})
+	})
+
 	test('roundtrip', async () => {
 		const storage = await UserStorage.create(db)
 		const createUser = await storage.create({ name: 'test', email: 'test@test.com', password: 'password' })
@@ -26,6 +33,9 @@ function createDatabase(): Database {
 			date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			user_id INTEGER,
 			FOREIGN KEY (user_id) REFERENCES users(id));`)
+		db.run(`CREATE TABLE _meta (
+			key TEXT NOT NULL,
+			value TEXT);`)
 	})
 	return db
 }

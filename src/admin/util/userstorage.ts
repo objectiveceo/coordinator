@@ -23,14 +23,33 @@ export class VerifyResult {
 	}
 }
 
+async function saveSalt(database: Database): Promise<string> {
+	return new Promise( async (resolve, reject) => {
+		const salt = await bcrypt.genSalt()
+		database.run('INSERT INTO _meta (key, value) VALUES (?, ?);', ['user_salt', salt], (error) => {
+			if (error) {
+				reject(error)
+				return
+			}
+			resolve(salt)
+		})
+	})
+}
+
 export default class UserStorage {
 	readonly database: Database
 	readonly salt: string
 
 	static async create(database: Database): Promise<UserStorage> {
-		return new Promise( async resolve => {
-			const salt = await bcrypt.genSalt()
-			resolve(new UserStorage(database, salt))
+		return new Promise( async (resolve, reject) => {
+			database.get('SELECT value FROM _meta WHERE key = ?', 'user_salt', async (error, row) => {
+				if (error) {
+					reject(error)
+					return
+				}
+				const salt = row?.value || await saveSalt(database)
+				resolve(new UserStorage(database, salt))
+			})
 		})
 	}
 
