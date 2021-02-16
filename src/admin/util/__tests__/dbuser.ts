@@ -1,4 +1,5 @@
 import { Database } from 'sqlite3'
+import DbUser from '../dbuser'
 import UserStorage from '../userstorage'
 
 describe('DbUser tests', () => {
@@ -18,6 +19,12 @@ describe('DbUser tests', () => {
 
 		const verifyUser = await storage.verify({ name: 'test', password: 'password' })
 		expect(verifyUser).not.toBeNull()
+	})
+
+	test('throw error updating unsaved user', async () => {
+		const storage = await UserStorage.create(db)
+		const user = new DbUser({ name: 'test', email: 'email', storage })
+		await expect(user.save()).rejects.toThrow()
 	})
 })
 

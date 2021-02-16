@@ -60,19 +60,37 @@ export default class UserStorage {
 
 	async create({ name, email, password}: CreateParams): Promise<DbUser> {
 		const hash = await bcrypt.hash(password, this.salt)
+		const storage = this
 		return new Promise( (resolve, reject) => {
 			const values = [
 				name,
 				email,
 				hash
 			]
-			this.database.run(`INSERT INTO users (name, email, password_hash) VALUES (?,?,?);`, values, (error: Error | null) => {
+			this.database.run(`INSERT INTO users (name, email, password_hash) VALUES (?,?,?);`, values, function (error: Error | null) {
 				if (error != null) {
 					reject(error)
 					return
 				}
-				resolve(new DbUser({ name }))
+				resolve(new DbUser({ name, email, storage, identifier: this.lastID }))
 			})	
+		})
+	}
+
+	async update(user: DbUser): Promise<void> {
+		return new Promise( (resolve, reject) => {
+			if (!user.identifier) {
+				reject(new Error(`User must have identifier.  Did you mean to create? [User: ${JSON.stringify(user)}`))
+				return
+			}
+
+			this.database.run(`UPDATE users SET email=?, name=? WHERE id=?`, [user.email, user.name, user.identifier], (error) => {
+				if (error) {
+					reject(error)
+					return
+				}
+				resolve()
+			})
 		})
 	}
 
@@ -83,12 +101,12 @@ export default class UserStorage {
 				name,
 				hash
 			]
-			this.database.get(`SELECT email FROM users WHERE identifier = ? AND password_hash = ?`, values, (error, row) => {
+			this.database.get(`SELECT email, rowid FROM users WHERE name = ? AND password_hash = ?`, values, (error, row) => {
 				if (error) {
 					reject(error)
 					return
 				}
-				const user = new DbUser({ name: name })
+				const user = new DbUser({ name: name, email: row.email, identifier: row.rowid, storage: this })
 				resolve(new VerifyResult( VerifyStatus.Success, user))
 			})
 		})
