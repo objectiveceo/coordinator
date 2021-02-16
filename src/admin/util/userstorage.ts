@@ -93,8 +93,4 @@ export default class UserStorage {
 			})
 		})
 	}
-
-	load(identifier: String): DbUser {
-		return new DbUser({ name: 'tmp' })
-	}
 }
