@@ -66,7 +66,7 @@ export default class UserStorage {
 				email,
 				hash
 			]
-			this.database.run(`INSERT INTO users (identifier, email, password_hash) VALUES (?,?,?);`, values, (error: Error | null) => {
+			this.database.run(`INSERT INTO users (name, email, password_hash) VALUES (?,?,?);`, values, (error: Error | null) => {
 				if (error != null) {
 					reject(error)
 					return

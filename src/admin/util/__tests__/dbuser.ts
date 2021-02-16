@@ -26,7 +26,7 @@ function createDatabase(): Database {
 	db.serialize(() => {
 		db.run(`CREATE TABLE users (
 			date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			identifier TEXT NOT NULL,
+			name TEXT NOT NULL,
 			email TEXT NOT NULL,
 			password_hash TEXT);`)
 		db.run(`CREATE TABLE user_logins (
