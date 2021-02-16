@@ -1,6 +1,6 @@
 import { Database } from 'sqlite3'
 import DbUser from '../dbuser'
-import UserStorage from '../userstorage'
+import UserStorage, { VerifyStatus } from '../userstorage'
 
 describe('DbUser tests', () => {
 	const db = createDatabase()
@@ -17,14 +17,29 @@ describe('DbUser tests', () => {
 		const createUser = await storage.create({ name: 'test', email: 'test@test.com', password: 'password' })
 		expect(createUser).not.toBeNull()
 
-		const verifyUser = await storage.verify({ name: 'test', password: 'password' })
-		expect(verifyUser).not.toBeNull()
+		const verifyUserResult = await storage.verify({ name: 'test', password: 'password' })
+		expect(verifyUserResult).not.toBeNull()
+		expect(verifyUserResult.status).toBe(VerifyStatus.Success)
+		expect(verifyUserResult.user).not.toBeNull()
+
+		const user = verifyUserResult.user!
+		expect(user.name).toBe('test')
+		expect(user.email).toBe('test@test.com')
+		expect(user.identifier).not.toBeNull()
 	})
 
 	test('throw error updating unsaved user', async () => {
 		const storage = await UserStorage.create(db)
 		const user = new DbUser({ name: 'test', email: 'email', storage })
 		await expect(user.save()).rejects.toThrow()
+	})
+
+	test('verify invalid user', async () => {
+		const storage = await UserStorage.create(db)
+		const result = await storage.verify({ name: 'test', password: 'pword' })
+		expect(result).not.toBeNull()
+		expect(result.user).toBeNull()
+		expect(result.status).toBe(VerifyStatus.Failure)
 	})
 })
 

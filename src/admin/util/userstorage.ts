@@ -8,16 +8,16 @@ interface CreateParams {
 	password: string
 }
 
-enum VerifyStatus {
+export enum VerifyStatus {
 	Failure,
 	Success,
 }
 
 export class VerifyResult {
 	readonly status: VerifyStatus
-	user?: DbUser
+	user: DbUser | null
 
-	constructor(status: VerifyStatus, user?: DbUser) {
+	constructor(status: VerifyStatus, user: DbUser | null) {
 		this.status = status
 		this.user = user
 	}
@@ -106,6 +106,12 @@ export default class UserStorage {
 					reject(error)
 					return
 				}
+
+				if (!row) {
+					resolve(new VerifyResult( VerifyStatus.Failure, null ))
+					return
+				}
+
 				const user = new DbUser({ name: name, email: row.email, identifier: row.rowid, storage: this })
 				resolve(new VerifyResult( VerifyStatus.Success, user))
 			})
