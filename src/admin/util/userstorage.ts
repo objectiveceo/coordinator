@@ -58,7 +58,7 @@ export default class UserStorage {
 		this.salt = salt
 	}
 
-	async create({ name, email, password}: CreateParams): Promise<DbUser> {
+	async create({ name, email, password }: CreateParams): Promise<DbUser> {
 		const hash = await bcrypt.hash(password, this.salt)
 		const storage = this
 		return new Promise( (resolve, reject) => {
@@ -72,7 +72,7 @@ export default class UserStorage {
 					reject(error)
 					return
 				}
-				resolve(new DbUser({ name, email, storage, identifier: this.lastID }))
+				resolve(new DbUser({ name, email, identifier: this.lastID }))
 			})	
 		})
 	}
@@ -112,7 +112,7 @@ export default class UserStorage {
 					return
 				}
 
-				const user = new DbUser({ name: name, email: row.email, identifier: row.rowid, storage: this })
+				const user = new DbUser({ name: name, email: row.email, identifier: row.rowid })
 				resolve(new VerifyResult( VerifyStatus.Success, user))
 			})
 		})

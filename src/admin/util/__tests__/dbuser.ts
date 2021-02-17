@@ -30,8 +30,8 @@ describe('DbUser tests', () => {
 
 	test('throw error updating unsaved user', async () => {
 		const storage = await UserStorage.create(db)
-		const user = new DbUser({ name: 'test', email: 'email', storage })
-		await expect(user.save()).rejects.toThrow()
+		const user = new DbUser({ name: 'test', email: 'email' })
+		await expect(storage.update(user)).rejects.toThrow()
 	})
 
 	test('verify invalid user', async () => {

@@ -6,5 +6,5 @@ export enum SaveResult {
 
 export default interface User {
 	readonly name: string
-	save(): Promise<SaveResult>
+	readonly email: string
 }
