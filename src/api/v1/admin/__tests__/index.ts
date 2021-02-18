@@ -1,23 +1,36 @@
 import express from 'express'
 import request from 'supertest'
 import { register } from '../'
-import user from '../util/user'
-import UserStorage, { CreateParams, VerifyResult } from '../util/userstorage'
+import User from '../util/user'
+import UserStorage, { CreateParams, VerifyResult, VerifyStatus } from '../util/userstorage'
 
 class TestUserStorage implements UserStorage {
-	create({ name, email, password }: CreateParams): Promise<user> {
+	create({ name, email, password }: CreateParams): Promise<User> {
 		throw new Error('Method not implemented.')
 	}
-	update(user: user): Promise<void> {
+
+	update(user: User): Promise<void> {
 		throw new Error('Method not implemented.')
 	}
+
 	verify({ name, password }: { name: string; password: string }): Promise<VerifyResult> {
-		throw new Error('Method not implemented.')
+		return new Promise( (resolve) => {
+			switch (name) {
+				case 'test':
+					resolve(password === 'pword'
+						? new VerifyResult(VerifyStatus.Success, { name, email: 'test@test.com' })
+						: new VerifyResult(VerifyStatus.Failure, null))
+					return
+			}
+			resolve(new VerifyResult(VerifyStatus.Failure, null))
+		})
 	}
 }
 
 describe('/api/v1/admin tests', () => {
 	const app = express()
+	app.use(express.urlencoded())
+
 	const storage = new TestUserStorage()
 	register(app, storage)
 
@@ -27,5 +40,17 @@ describe('/api/v1/admin tests', () => {
 			.set('Accept', 'application/json')
 
 		expect(result.status).toBe(200)
+	})
+
+	test('POST ./login', async () => {
+		const result = await request(app)
+			.post('/api/v1/admin/login')
+			.send('name=test&password=pword')
+		
+		expect(result.status).toBe(200)
+		expect(result.body.status).toBe(1)
+		expect(result.body.user).not.toBeNull()
+		expect(result.body.user.name).toBe('test')
+		expect(result.body.user.email).toBe('test@test.com')
 	})
 })
