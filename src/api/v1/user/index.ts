@@ -2,8 +2,8 @@ import core from 'express'
 import UserStorage from './util/userstorage'
 
 export function register(app: core.Application, storage: UserStorage) {
-	app.get('/api/v1/admin', index)
-	app.post('/api/v1/admin/login', async(req, resp) => await login(req, resp, storage))
+	app.get('/api/v1/user', index)
+	app.post('/api/v1/user/login', async(req, resp) => await login(req, resp, storage))
 }
 
 function index(request: core.Request, response: core.Response) {

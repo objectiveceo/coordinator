@@ -27,7 +27,7 @@ class TestUserStorage implements UserStorage {
 	}
 }
 
-describe('/api/v1/admin tests', () => {
+describe('/api/v1/user tests', () => {
 	const app = express()
 	app.use(express.urlencoded())
 
@@ -36,7 +36,7 @@ describe('/api/v1/admin tests', () => {
 
 	test('GET ./', async () => {
 		const result = await request(app)
-			.get('/api/v1/admin')
+			.get('/api/v1/user')
 			.set('Accept', 'application/json')
 
 		expect(result.status).toBe(200)
@@ -44,7 +44,7 @@ describe('/api/v1/admin tests', () => {
 
 	test('POST ./login', async () => {
 		const result = await request(app)
-			.post('/api/v1/admin/login')
+			.post('/api/v1/user/login')
 			.send('name=test&password=pword')
 		
 		expect(result.status).toBe(200)
