@@ -1,6 +1,4 @@
-import { userInfo } from 'os'
-import User, { SaveResult } from './user'
-import UserStorage from './userstorage'
+import User from './user'
 
 export interface DbUserConstructor {
 	email: string

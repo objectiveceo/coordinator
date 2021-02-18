@@ -1,19 +1,20 @@
 import { Database } from 'sqlite3'
 import DbUser from '../dbuser'
-import UserStorage, { VerifyStatus } from '../userstorage'
+import { VerifyStatus } from '../userstorage'
+import DbUserStorage from '../dbuserstorage'
 
 describe('DbUser tests', () => {
 	const db = createDatabase()
 
 	test('create salt if nonexistent', async () => {
-		const storage = await UserStorage.create(db)
+		const storage = await DbUserStorage.create(db)
 		db.get('SELECT value FROM _meta WHERE key = ?', 'user_salt', (error, row) => {
 			expect(row.value).not.toBeNull()
 		})
 	})
 
 	test('roundtrip', async () => {
-		const storage = await UserStorage.create(db)
+		const storage = await DbUserStorage.create(db)
 		const createUser = await storage.create({ name: 'test', email: 'test@test.com', password: 'password' })
 		expect(createUser).not.toBeNull()
 
@@ -22,20 +23,20 @@ describe('DbUser tests', () => {
 		expect(verifyUserResult.status).toBe(VerifyStatus.Success)
 		expect(verifyUserResult.user).not.toBeNull()
 
-		const user = verifyUserResult.user!
+		const user = verifyUserResult.user! as DbUser
 		expect(user.name).toBe('test')
 		expect(user.email).toBe('test@test.com')
 		expect(user.identifier).not.toBeNull()
 	})
 
 	test('throw error updating unsaved user', async () => {
-		const storage = await UserStorage.create(db)
+		const storage = await DbUserStorage.create(db)
 		const user = new DbUser({ name: 'test', email: 'email' })
 		await expect(storage.update(user)).rejects.toThrow()
 	})
 
 	test('verify invalid user', async () => {
-		const storage = await UserStorage.create(db)
+		const storage = await DbUserStorage.create(db)
 		const result = await storage.verify({ name: 'test', password: 'pword' })
 		expect(result).not.toBeNull()
 		expect(result.user).toBeNull()
