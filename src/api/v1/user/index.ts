@@ -24,13 +24,9 @@ async function login(request: core.Request, response: core.Response, storage: Us
 	const user = result.user!
 
 	const expirations = seedExpirationGenerator()
-	const accessPayload = {
-		...user,
-		expiration: expirations.access.date,
-	}
 
 	const accessSeed = await seedProvider.generateAccessTokenSeed(user)
-	const accessToken = jsonwebtoken.sign(accessPayload, accessSeed, { expiresIn: expirations.access.expiresIn })
+	const accessToken = jsonwebtoken.sign(user, accessSeed, { expiresIn: expirations.access.expiresIn })
 
 	const refreshTokenSeed = await seedProvider.generateRefreshTokenSeed(user)
 	const refreshToken = jsonwebtoken.sign(user, refreshTokenSeed, { expiresIn: expirations.refresh.expiresIn })
