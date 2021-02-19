@@ -1,7 +1,7 @@
 import express from 'express'
 import jsonwebtoken from 'jsonwebtoken'
 import request from 'supertest'
-import { register } from '../'
+import { register, TokenPayload } from '../'
 import JWTSeedProvider from '../util/jwtseedprovider'
 import User from '../util/user'
 import UserStorage, { CreateParams, VerifyResult, VerifyStatus } from '../util/userstorage'
@@ -78,6 +78,7 @@ describe('/api/v1/user tests', () => {
 	})
 
 	test('POST ./login', async () => {
+		const now = Math.round(Date.now() / 1000)
 		const result = await request(app)
 			.post('/api/v1/user/login')
 			.send('name=test&password=pword')
@@ -85,13 +86,17 @@ describe('/api/v1/user tests', () => {
 		expect(result.status).toBe(200)
 
 		expect(result.body.accessToken).not.toBeNull()
-		const accessPayload = jsonwebtoken.verify(result.body.accessToken, await seedProvider.accessTokenSeed!) as User
-		expect(accessPayload.name).toBe('test')
-		expect(accessPayload.email).toBe('test@test.com')
+		const accessPayload = jsonwebtoken.verify(result.body.accessToken, await seedProvider.accessTokenSeed!) as TokenPayload
+		expect(accessPayload.user.name).toBe('test')
+		expect(accessPayload.user.email).toBe('test@test.com')
+		expect(accessPayload.iat).toEqual(now)
+		expect(accessPayload.exp).toEqual(now + 30)
 
 		expect(result.body.refreshToken).not.toBeNull()
-		const refreshPayload = jsonwebtoken.verify(result.body.refreshToken, await seedProvider.refreshTokenSeed!) as User
-		expect(refreshPayload.name).toBe('test')
-		expect(refreshPayload.email).toBe('test@test.com')
+		const refreshPayload = jsonwebtoken.verify(result.body.refreshToken, await seedProvider.refreshTokenSeed!) as TokenPayload
+		expect(refreshPayload.user.name).toBe('test')
+		expect(refreshPayload.user.email).toBe('test@test.com')
+		expect(refreshPayload.iat).toEqual(now)
+		expect(refreshPayload.exp).toEqual(now + 45)
 	})
 })

@@ -1,6 +1,7 @@
 import core, { json } from 'express'
 import jsonwebtoken from 'jsonwebtoken'
 import JWTSeedProvider from './util/jwtseedprovider'
+import User from './util/user'
 import UserStorage from './util/userstorage'
 
 export interface SeedExpiration {
@@ -8,6 +9,12 @@ export interface SeedExpiration {
 }
 
 export type SeedExpirationGenerator = () => { access: SeedExpiration, refresh: SeedExpiration }
+
+export interface TokenPayload {
+	user: User,
+	iat: Number,
+	exp: Number,
+}
 
 export function register(app: core.Application, storage: UserStorage, seedProvider: JWTSeedProvider, seedExpirationGenerator: SeedExpirationGenerator) {
 	app.get('/api/v1/user', index)
@@ -25,10 +32,10 @@ async function login(request: core.Request, response: core.Response, storage: Us
 	const expirations = seedExpirationGenerator()
 
 	const accessSeed = await seedProvider.generateAccessTokenSeed(user)
-	const accessToken = jsonwebtoken.sign(user, accessSeed, { expiresIn: expirations.access.expiresIn })
+	const accessToken = jsonwebtoken.sign({ user }, accessSeed, { expiresIn: expirations.access.expiresIn })
 
 	const refreshTokenSeed = await seedProvider.generateRefreshTokenSeed(user)
-	const refreshToken = jsonwebtoken.sign(user, refreshTokenSeed, { expiresIn: expirations.refresh.expiresIn })
+	const refreshToken = jsonwebtoken.sign({ user }, refreshTokenSeed, { expiresIn: expirations.refresh.expiresIn })
 
 	response.json({ accessToken, refreshToken })
 }
