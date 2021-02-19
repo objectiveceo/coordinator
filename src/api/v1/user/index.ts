@@ -4,7 +4,6 @@ import JWTSeedProvider from './util/jwtseedprovider'
 import UserStorage from './util/userstorage'
 
 export interface SeedExpiration {
-	date: Date,
 	expiresIn: string,
 }
 

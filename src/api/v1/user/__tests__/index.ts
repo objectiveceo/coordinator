@@ -61,8 +61,8 @@ describe('/api/v1/user tests', () => {
 	const seedProvider = new TestSeedProvider
 	const expirationGenerator = () => {
 		return {
-			access: { date: new Date, expiresIn: '15m' },
-			refresh: { date: new Date, expiresIn: '15m' },
+			access: { expiresIn: '30s' },
+			refresh: { expiresIn: '45s' },
 		}
 	}
 
