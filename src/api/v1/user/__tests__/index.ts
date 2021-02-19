@@ -56,7 +56,7 @@ class TestSeedProvider implements JWTSeedProvider {
 
 describe('/api/v1/user tests', () => {
 	const app = express()
-	app.use(express.urlencoded())
+	app.use(express.urlencoded({ extended: true }))
 
 	const seedProvider = new TestSeedProvider
 	const expirationGenerator = () => {

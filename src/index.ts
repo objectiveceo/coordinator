@@ -30,7 +30,7 @@ const database = new sqlite3.Database(DATABASE_PATH, error => {
 
 const blogRepository = new DatabaseBlogRepository(database)
 
-app.use(express.urlencoded())
+app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 app.listen(PORT, () => {
