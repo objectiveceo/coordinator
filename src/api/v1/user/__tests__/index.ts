@@ -77,6 +77,20 @@ describe('/api/v1/user tests', () => {
 		expect(result.status).toBe(200)
 	})
 
+	test('GET ./ but with an access token', async () => {
+		const user = { name: 'test', email: 'test@test.com' }
+		const token = jsonwebtoken.sign({ user }, await seedProvider.generateAccessTokenSeed(user))
+
+		const result = await request(app)
+			.get('/api/v1/user')
+			.set('Accept', 'application/json')
+			.set('Authorization', `Bearer ${token}`)
+
+		expect(result.status).toBe(200)
+		expect(result.body.user.name).toBe('test')
+		expect(result.body.user.email).toBe('test@test.com')
+	})
+
 	test('POST ./login', async () => {
 		const now = Math.round(Date.now() / 1000)
 		const result = await request(app)

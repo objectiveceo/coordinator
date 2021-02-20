@@ -17,12 +17,25 @@ export interface TokenPayload {
 }
 
 export function register(app: core.Application, storage: UserStorage, seedProvider: JWTSeedProvider, seedExpirationGenerator: SeedExpirationGenerator) {
-	app.get('/api/v1/user', index)
-	app.post('/api/v1/user/login', async(req, resp) => await login(req, resp, storage, seedProvider, seedExpirationGenerator))
+	app.get('/api/v1/user', async (req, resp) => index(req, resp, seedProvider))
+	app.post('/api/v1/user/login', async (req, resp) => login(req, resp, storage, seedProvider, seedExpirationGenerator))
 }
 
-function index(request: core.Request, response: core.Response) {
-	response.json({})
+async function index(request: core.Request, response: core.Response, seedProvider: JWTSeedProvider) {
+	const authHeader = request.headers.authorization
+	if (!authHeader) {
+		response.json({})
+		return
+	}
+
+	const accessToken = authHeader.split(' ')[1]
+	if (!accessToken) {
+		throw new Error('Missing access token in Authorization header (must match "Authorization: Bearer <token>"')
+	}
+	const tmpPayload = jsonwebtoken.decode(accessToken) as TokenPayload
+	const payload = jsonwebtoken.verify(accessToken, await seedProvider.generateAccessTokenSeed(tmpPayload.user))
+
+	response.json(payload)
 }
 
 async function login(request: core.Request, response: core.Response, storage: UserStorage, seedProvider: JWTSeedProvider, seedExpirationGenerator: SeedExpirationGenerator) {
