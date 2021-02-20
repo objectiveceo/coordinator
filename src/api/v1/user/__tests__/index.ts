@@ -103,14 +103,14 @@ describe('/api/v1/user tests', () => {
 		const accessPayload = jsonwebtoken.verify(result.body.accessToken, await seedProvider.accessTokenSeed!) as TokenPayload
 		expect(accessPayload.user.name).toBe('test')
 		expect(accessPayload.user.email).toBe('test@test.com')
-		expect(accessPayload.iat).toEqual(now)
-		expect(accessPayload.exp).toEqual(now + 30)
+		expect(+accessPayload.iat - now).toBeLessThanOrEqual(1)
+		expect(+accessPayload.exp - now).toBeLessThanOrEqual(31)
 
 		expect(result.body.refreshToken).not.toBeNull()
 		const refreshPayload = jsonwebtoken.verify(result.body.refreshToken, await seedProvider.refreshTokenSeed!) as TokenPayload
 		expect(refreshPayload.user.name).toBe('test')
 		expect(refreshPayload.user.email).toBe('test@test.com')
-		expect(refreshPayload.iat).toEqual(now)
-		expect(refreshPayload.exp).toEqual(now + 45)
+		expect(+refreshPayload.iat - now).toBeLessThanOrEqual(1)
+		expect(+refreshPayload.exp - now).toBeLessThanOrEqual(46)
 	})
 })
