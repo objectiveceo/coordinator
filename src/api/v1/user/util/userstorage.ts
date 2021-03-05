@@ -22,6 +22,7 @@ export class VerifyResult {
 }
 
 export default interface UserStorage {
+	all(): Promise<User[]>
 	create({ name, email, password }: CreateParams): Promise<User>
 	update(user: User): Promise<void>
 	verify({ name, password }: { name: string, password: string }): Promise<VerifyResult>
