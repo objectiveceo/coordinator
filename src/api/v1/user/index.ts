@@ -12,8 +12,8 @@ export type SeedExpirationGenerator = () => { access: SeedExpiration, refresh: S
 
 export interface TokenPayload {
 	user: User,
-	iat: Number,
-	exp: Number,
+	iat: number,
+	exp: number,
 }
 
 export function register(app: core.Application, storage: UserStorage, seedProvider: JWTSeedProvider, seedExpirationGenerator: SeedExpirationGenerator) {

@@ -9,7 +9,7 @@ enum SeedType {
 	Refresh,
 }
 
-async function saveSeed(database: Database, userIdentifier: Number, type: SeedType): Promise<string> {
+async function saveSeed(database: Database, userIdentifier: number, type: SeedType): Promise<string> {
 	const salt = await bcrypt.genSalt()
 	return new Promise( (resolve, reject) => {
 		database.run('INSERT OR REPLACE INTO jwt_seeds (user_id, seed, type) VALUES (?, ?, ?)', [userIdentifier, salt, type], (error) => {
@@ -22,7 +22,7 @@ async function saveSeed(database: Database, userIdentifier: Number, type: SeedTy
 	})
 }
 
-async function generateSeed(database: Database, userIdentifier: Number, type: SeedType): Promise<string> {
+async function generateSeed(database: Database, userIdentifier: number, type: SeedType): Promise<string> {
 	return new Promise( (resolve, reject) => {
 		database.get('SELECT seed from jwt_seeds WHERE user_id=?', userIdentifier, async (error, row) => {
 			if (error) {

@@ -52,7 +52,7 @@ export default class DbUserStorage implements UserStorage {
 					return
 				}
 				resolve(new DbUser({ name, email, identifier: this.lastID }))
-			})	
+			})
 		})
 	}
 
@@ -91,7 +91,7 @@ export default class DbUserStorage implements UserStorage {
 					return
 				}
 
-				const user = new DbUser({ name: name, email: row.email, identifier: row.rowid })
+				const user = new DbUser({ name, email: row.email, identifier: row.rowid })
 				resolve(new VerifyResult( VerifyStatus.Success, user))
 			})
 		})
