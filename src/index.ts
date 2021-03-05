@@ -6,8 +6,11 @@ import sqlite3 from 'sqlite3'
 import { register as infoRegister } from './api/v1/info'
 import { register as blogRegister } from './blog/v1/index'
 import { register as syndicationRegister } from './syndication'
+import { register as userRegister } from './api/v1/user'
 import DatabaseBlogRepository from './common/data/DatabaseBlogRepository'
 import TemplateEngine from './common/data/TemplateEngine'
+import DbUserStorage from './api/v1/user/util/dbuserstorage'
+import PersistentJWTSeedProvider from './api/v1/user/util/persistentjwtseedprovider'
 
 dotenv.config()
 
@@ -38,8 +41,23 @@ app.listen(PORT, () => {
 	console.log(`Open http://localhost:${PORT}`)
 })
 
-TemplateEngine.initialize(database).then(templateEngine => {
+function userSeedExpirationGenerator() {
+	return {
+		access: { expiresIn: '10m' },
+		refresh: { expiresIn: '1 week' },
+	}
+}
+
+Promise.all([
+	TemplateEngine.initialize(database),
+	DbUserStorage.create(database),
+]).then(results => {
+	const [
+		templateEngine,
+		userStorage,
+	] = results
 	infoRegister(app)
 	blogRegister(app, blogRepository, templateEngine)
 	syndicationRegister(app, { title: BLOG_NAME, id: ROOT_URL, copyright: COPYRIGHT, linkGenerator: (p) => `${ROOT_URL}/posts/${p.slug}` }, blogRepository)
+	userRegister(app, userStorage, new PersistentJWTSeedProvider(database), userSeedExpirationGenerator)
 })
