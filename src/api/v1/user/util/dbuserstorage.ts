@@ -2,6 +2,7 @@ import { Database } from 'sqlite3'
 import bcrypt from 'bcrypt'
 import DbUser from './dbuser'
 import UserStorage, { CreateParams, VerifyResult, VerifyStatus } from './userstorage'
+import User from './user'
 
 async function saveSalt(database: Database): Promise<string> {
 	return new Promise( async (resolve, reject) => {
@@ -14,6 +15,12 @@ async function saveSalt(database: Database): Promise<string> {
 			resolve(salt)
 		})
 	})
+}
+
+type DbUserRow = {
+	name: string,
+	email: string,
+	rowid: number,
 }
 
 export default class DbUserStorage implements UserStorage {
@@ -36,6 +43,19 @@ export default class DbUserStorage implements UserStorage {
 	private constructor(database: Database, salt: string) {
 		this.database = database
 		this.salt = salt
+	}
+
+	all(): Promise<User[]> {
+		return new Promise( (resolve, reject) => {
+			this.database.all(`SELECT name, email, rowid FROM users;`, (error, rows) => {
+				if (reject) {
+					reject(error)
+					return
+				}
+				const users = rows.map((row: DbUserRow) => new DbUser({ identifier: row.rowid, ...row }))
+				resolve(users)
+			})
+		})
 	}
 
 	async create({ name, email, password }: CreateParams): Promise<DbUser> {

@@ -7,6 +7,12 @@ import User from '../util/user'
 import UserStorage, { CreateParams, VerifyResult, VerifyStatus } from '../util/userstorage'
 
 class TestUserStorage implements UserStorage {
+	public users: User[] = []
+
+	all(): Promise<User[]> {
+		return Promise.resolve(this.users)
+	}
+
 	create({ name, email, password }: CreateParams): Promise<User> {
 		throw new Error('Method not implemented.')
 	}
