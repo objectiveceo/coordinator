@@ -48,7 +48,7 @@ export default class DbUserStorage implements UserStorage {
 	all(): Promise<User[]> {
 		return new Promise( (resolve, reject) => {
 			this.database.all(`SELECT name, email, rowid FROM users;`, (error, rows) => {
-				if (reject) {
+				if (error) {
 					reject(error)
 					return
 				}
