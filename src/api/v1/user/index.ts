@@ -17,14 +17,20 @@ export interface TokenPayload {
 }
 
 export function register(app: core.Application, storage: UserStorage, seedProvider: JWTSeedProvider, seedExpirationGenerator: SeedExpirationGenerator) {
-	app.get('/api/v1/user', async (req, resp) => index(req, resp, seedProvider))
+	app.get('/api/v1/user', async (req, resp) => index(req, resp, storage, seedProvider))
 	app.post('/api/v1/user/login', async (req, resp) => login(req, resp, storage, seedProvider, seedExpirationGenerator))
 }
 
-async function index(request: core.Request, response: core.Response, seedProvider: JWTSeedProvider) {
+async function index(request: core.Request, response: core.Response, storage: UserStorage, seedProvider: JWTSeedProvider) {
 	const authHeader = request.headers.authorization
 	if (!authHeader) {
-		response.json({})
+		const payload = {} as any
+		const users = await storage.all()
+		if (!(users?.length)) {
+			payload.canCreateInitialUser = true
+		}
+
+		response.json(payload)
 		return
 	}
 

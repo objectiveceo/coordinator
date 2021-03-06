@@ -6,6 +6,16 @@ import JWTSeedProvider from '../util/jwtseedprovider'
 import User from '../util/user'
 import UserStorage, { CreateParams, VerifyResult, VerifyStatus } from '../util/userstorage'
 
+class TestUser implements User {
+	name: string
+	email: string
+
+	constructor({name = "", email = ""}) {
+		this.name = name
+		this.email = email
+	}
+}
+
 class TestUserStorage implements UserStorage {
 	public users: User[] = []
 
@@ -75,7 +85,26 @@ describe('/api/v1/user tests', () => {
 	const storage = new TestUserStorage()
 	register(app, storage, seedProvider, expirationGenerator)
 
-	test('GET ./', async () => {
+	test('GET ./ with potential account creation', async () => {
+		const result = await request(app)
+			.get('/api/v1/user')
+			.set('Accept', 'application/json')
+
+		expect(result.status).toBe(200)
+		expect(result.body.canCreateInitialUser).toBe(true)
+	})
+
+	test('PUT ./user account creation', async () => {
+		storage.users = [new TestUser({})]
+		const result = await request(app)
+			.get('/api/v1/user')
+			.set('Accept', 'application/json')
+
+		expect(result.status).toBe(200)
+		expect(result.body.canCreateInitialUser).toBeUndefined()
+	})
+
+	test('GET ./ without potential account creation', async () => {
 		const result = await request(app)
 			.get('/api/v1/user')
 			.set('Accept', 'application/json')
