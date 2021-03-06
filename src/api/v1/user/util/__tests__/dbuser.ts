@@ -46,13 +46,18 @@ describe('DbUser tests', () => {
 		test('fetching users', async () => {
 			const storage = await DbUserStorage.create(db)
 			const user = await storage.create({ name: 'all', email: 'all@test', password: 'allpass' })
+			const user2 = await storage.create({ name: 'all2', email: 'all2@test', password: 'allpass' })
 			const all = await storage.all()
 
-			expect(all.length).toBeGreaterThanOrEqual(1)
+			expect(all.length).toBeGreaterThanOrEqual(2)
 
 			const found = all.filter(x => x.email === user.email)[0]
 			expect(found.email).toEqual(user.email)
 			expect(found.name).toEqual(user.name)
+
+			const found2 = all.filter(x => x.email === user2.email)[0]
+			expect(found2.email).toEqual(user2.email)
+			expect(found2.name).toEqual(user2.name)
 		})
 	})
 })
