@@ -5,7 +5,6 @@ import DbUserStorage from '../dbuserstorage'
 
 describe('DbUser tests', () => {
 	const db = createDatabase()
-
 	test('create salt if nonexistent', async () => {
 		const storage = await DbUserStorage.create(db)
 		db.get('SELECT value FROM _meta WHERE key = ?', 'user_salt', (error, row) => {
@@ -41,6 +40,20 @@ describe('DbUser tests', () => {
 		expect(result).not.toBeNull()
 		expect(result.user).toBeNull()
 		expect(result.status).toBe(VerifyStatus.Failure)
+	})
+
+	db.serialize( () => {
+		test('fetching users', async () => {
+			const storage = await DbUserStorage.create(db)
+			const user = await storage.create({ name: 'all', email: 'all@test', password: 'allpass' })
+			const all = await storage.all()
+
+			expect(all.length).toBeGreaterThanOrEqual(1)
+
+			const found = all.filter(x => x.email === user.email)[0]
+			expect(found.email).toEqual(user.email)
+			expect(found.name).toEqual(user.name)
+		})
 	})
 })
 
