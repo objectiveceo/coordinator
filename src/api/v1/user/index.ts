@@ -94,7 +94,7 @@ async function createUser(request: core.Request, response: core.Response, storag
 	}
 
 	const body = request.body as CreateUserBody
-	if (!body) {
+	if (!body || !body.email || !body.name || !body.password) {
 		response.status(400)
 		response.send('Invalid request body')
 		return
