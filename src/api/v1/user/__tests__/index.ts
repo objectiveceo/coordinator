@@ -24,7 +24,9 @@ class TestUserStorage implements UserStorage {
 	}
 
 	create({ name, email, password }: CreateParams): Promise<User> {
-		throw new Error('Method not implemented.')
+		const user = new TestUser({ name, email })
+		this.users[this.users.length] = user
+		return Promise.resolve(user)
 	}
 
 	update(user: User): Promise<void> {
@@ -102,6 +104,17 @@ describe('/api/v1/user tests', () => {
 
 		expect(result.status).toBe(200)
 		expect(result.body.canCreateInitialUser).toBeUndefined()
+	})
+
+	test('PUT ./user with initial user allowance', async () => {
+		storage.users = []
+		const result = await request(app)
+			.put('/api/v1/user')
+			.send('name=initial&email=initial@test.com&password=passwd')
+
+			expect(result.status).toBe(200)
+			expect(result.body.user.name).toEqual('initial')
+			expect(result.body.user.email).toEqual('initial@test.com')
 	})
 
 	test('GET ./ without potential account creation', async () => {
