@@ -68,7 +68,7 @@ async function login(request: core.Request, response: core.Response, storage: Us
 }
 
 async function createUser(request: core.Request, response: core.Response, storage: UserStorage, seedProvider: JWTSeedProvider) {
-	const canCreateUser = await (async function() {
+	const canCreateUser = await (async () => {
 		try {
 			const authHeader = request.headers.authorization ?? ""
 			const payload = !authHeader ? null : await getJWTPayload(authHeader, seedProvider)
