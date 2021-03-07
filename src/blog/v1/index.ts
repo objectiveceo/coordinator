@@ -12,6 +12,7 @@ async function buildPost(templateEngine: TemplateEngine, repository: Blog, reque
 	const post = await repository.fetchPost(request.params.slug)
 	if (!post) {
 		response.status(404)
+		response.send('Not found')
 		return
 	}
 	response.send(templateEngine.generateBlogPost(post))
@@ -25,6 +26,7 @@ async function fetchMarkdown(repository: Blog, request: core.Request, response: 
 	const post = await repository.fetchPost(request.params.slug)
 	if (!post) {
 		response.status(404)
+		response.send('Not found')
 		return
 	}
 	response.type('text/plain')
