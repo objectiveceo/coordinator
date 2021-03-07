@@ -81,8 +81,9 @@ async function createUser(request: core.Request, response: core.Response, storag
 			const authHeader = request.headers.authorization ?? ""
 			const payload = !authHeader ? null : await getJWTPayload(authHeader, seedProvider)
 			const allowInitialUserCreation = !authHeader && await canCreateInitialUser(storage)
-			const isActualUser = (await storage.info(body)).status == InfoStatus.Exists
-			return allowInitialUserCreation || (!!payload && isActualUser)
+			const user = payload?.user
+			const isActualUser = user != null && (await storage.info(user)).status == InfoStatus.Exists
+			return allowInitialUserCreation || (null != payload && isActualUser)
 		}
 		catch {
 			return false
