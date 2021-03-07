@@ -10,7 +10,7 @@ class TestUser implements User {
 	name: string
 	email: string
 
-	constructor({name = "", email = ""}) {
+	constructor({ name = "", email = "" }) {
 		this.name = name
 		this.email = email
 	}
