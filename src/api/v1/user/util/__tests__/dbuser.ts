@@ -1,6 +1,6 @@
 import { Database } from 'sqlite3'
 import DbUser from '../dbuser'
-import { VerifyStatus } from '../userstorage'
+import { InfoStatus, VerifyStatus } from '../userstorage'
 import DbUserStorage from '../dbuserstorage'
 
 describe('DbUser tests', () => {
@@ -58,6 +58,19 @@ describe('DbUser tests', () => {
 			const found2 = all.filter(x => x.email === user2.email)[0]
 			expect(found2.email).toEqual(user2.email)
 			expect(found2.name).toEqual(user2.name)
+		})
+
+		test('fetch user info', async () => {
+			const storage = await DbUserStorage.create(db)
+			const user = await storage.create({ name: 'fetchuser', email: 'fetchuser@test', password: 'fetchpass' })
+			const info = await storage.info(user)
+			expect(info.status).toEqual(InfoStatus.Exists)
+		})
+
+		test('fetch missing user', async () => {
+			const storage = await DbUserStorage.create(db)
+			const info = await storage.info({ name: 'nonexistent', email: 'non@existent.com' })
+			expect(info.status).toEqual(InfoStatus.DoesNotExist)
 		})
 	})
 })

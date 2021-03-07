@@ -1,7 +1,7 @@
 import { Database } from 'sqlite3'
 import bcrypt from 'bcrypt'
 import DbUser from './dbuser'
-import UserStorage, { CreateParams, VerifyResult, VerifyStatus } from './userstorage'
+import UserStorage, { CreateParams, InfoResult, InfoStatus, VerifyResult, VerifyStatus } from './userstorage'
 import User from './user'
 
 async function saveSalt(database: Database): Promise<string> {
@@ -72,6 +72,18 @@ export default class DbUserStorage implements UserStorage {
 					return
 				}
 				resolve(new DbUser({ name, email, identifier: this.lastID }))
+			})
+		})
+	}
+
+	info({ name, email }: { name: string; email: string }): Promise<InfoResult> {
+		return new Promise( (resolve, reject) => {
+			this.database.get(`SELECT rowid FROM users WHERE name=? AND email=?;`, [ name, email ], (error, row) => {
+				if (error) {
+					reject(new Error(`Error: ${error}`))
+					return
+				}
+				resolve(new InfoResult(row == null ? InfoStatus.DoesNotExist : InfoStatus.Exists))
 			})
 		})
 	}
