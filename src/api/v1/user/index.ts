@@ -72,8 +72,9 @@ async function createUser(request: core.Request, response: core.Response, storag
 	const canCreateUser = await (async function() {
 		try {
 			const authHeader = request.headers.authorization ?? ""
-			return (!authHeader && await canCreateInitialUser(storage))
-				|| null != await getJWTPayload(authHeader, seedProvider)
+			const payload = !authHeader ? null : await getJWTPayload(authHeader, seedProvider)
+			const allowInitialUserCreation = !authHeader && await canCreateInitialUser(storage)
+			return allowInitialUserCreation || !!payload
 		}
 		catch {
 			return false
@@ -82,6 +83,7 @@ async function createUser(request: core.Request, response: core.Response, storag
 
 	if (!canCreateUser) {
 		response.status(401)
+		response.send('Unauthorized')
 		return
 	}
 
@@ -94,6 +96,7 @@ async function createUser(request: core.Request, response: core.Response, storag
 	const body = request.body as CreateUserBody
 	if (!body) {
 		response.status(400)
+		response.send('Invalid request body')
 		return
 	}
 
