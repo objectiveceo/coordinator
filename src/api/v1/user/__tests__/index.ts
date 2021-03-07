@@ -4,7 +4,7 @@ import request from 'supertest'
 import { register, TokenPayload } from '../'
 import JWTSeedProvider from '../util/jwtseedprovider'
 import User from '../util/user'
-import UserStorage, { CreateParams, VerifyResult, VerifyStatus } from '../util/userstorage'
+import UserStorage, { CreateParams, InfoResult, InfoStatus, VerifyResult, VerifyStatus } from '../util/userstorage'
 
 class TestUser implements User {
 	name: string
@@ -27,6 +27,13 @@ class TestUserStorage implements UserStorage {
 		const user = new TestUser({ name, email })
 		this.users[this.users.length] = user
 		return Promise.resolve(user)
+	}
+
+	info({ name, email }: { name: string; email: string }): Promise<InfoResult> {
+		const status = this.users.filter(x => x.name === name).length == 0
+			? InfoStatus.DoesNotExist
+			: InfoStatus.Exists
+		return Promise.resolve(new InfoResult(status))
 	}
 
 	update(user: User): Promise<void> {
@@ -115,6 +122,21 @@ describe('/api/v1/user tests', () => {
 			expect(result.status).toBe(200)
 			expect(result.body.user.name).toEqual('initial')
 			expect(result.body.user.email).toEqual('initial@test.com')
+	})
+
+	test('PUT ./user with valid auth header', async () => {
+		const user = { name: 'test', email: 'test@test.com' }
+		const token = jsonwebtoken.sign({ user }, await seedProvider.generateAccessTokenSeed(user))
+
+		storage.users = [new TestUser({})]
+		const result = await request(app)
+			.put('/api/v1/user')
+			.set('Authorization', `Bearer ${token}`)
+			.send('name=initial&email=initial@test.com&password=pword')
+
+		expect(result.status).toBe(200)
+		expect(result.body.user.name).toEqual('initial')
+		expect(result.body.user.email).toEqual('initial@test.com')
 	})
 
 	test('PUT ./user error creating user with valid auth header', async () => {

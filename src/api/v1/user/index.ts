@@ -2,7 +2,7 @@ import core, { json } from 'express'
 import jsonwebtoken from 'jsonwebtoken'
 import JWTSeedProvider from './util/jwtseedprovider'
 import User from './util/user'
-import UserStorage from './util/userstorage'
+import UserStorage, { InfoStatus } from './util/userstorage'
 
 export interface SeedExpiration {
 	expiresIn: string,
@@ -68,12 +68,21 @@ async function login(request: core.Request, response: core.Response, storage: Us
 }
 
 async function createUser(request: core.Request, response: core.Response, storage: UserStorage, seedProvider: JWTSeedProvider) {
+	interface CreateUserBody {
+		email: string,
+		name: string,
+		password: string,
+	}
+
+	const body = request.body as CreateUserBody
+
 	const canCreateUser = await (async () => {
 		try {
 			const authHeader = request.headers.authorization ?? ""
 			const payload = !authHeader ? null : await getJWTPayload(authHeader, seedProvider)
 			const allowInitialUserCreation = !authHeader && await canCreateInitialUser(storage)
-			return allowInitialUserCreation || !!payload
+			const isActualUser = (await storage.info(body)).status == InfoStatus.Exists
+			return allowInitialUserCreation || (!!payload && isActualUser)
 		}
 		catch {
 			return false
@@ -86,13 +95,6 @@ async function createUser(request: core.Request, response: core.Response, storag
 		return
 	}
 
-	interface CreateUserBody {
-		email: string,
-		name: string,
-		password: string,
-	}
-
-	const body = request.body as CreateUserBody
 	if (!body || !body.email || !body.name || !body.password) {
 		response.status(400)
 		response.send('Invalid request body')
