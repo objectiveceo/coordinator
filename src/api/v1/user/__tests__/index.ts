@@ -117,6 +117,19 @@ describe('/api/v1/user tests', () => {
 			expect(result.body.user.email).toEqual('initial@test.com')
 	})
 
+	test('PUT ./user error creating user with valid auth header', async () => {
+		const user = { name: 'test', email: 'test@test.com' }
+		const token = jsonwebtoken.sign({ user }, await seedProvider.generateAccessTokenSeed(user))
+
+		storage.users = [new TestUser({})]
+		const result = await request(app)
+			.put('/api/v1/user')
+			.set('Authorization', `Bearer ${token}`)
+			.send('name=initial&email=initial@test.com')
+
+			expect(result.status).toBe(400)
+	})
+
 	test('PUT ./user error creating user without auth header', async () => {
 		storage.users = [new TestUser({})]
 		const result = await request(app)
