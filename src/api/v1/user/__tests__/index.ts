@@ -117,6 +117,15 @@ describe('/api/v1/user tests', () => {
 			expect(result.body.user.email).toEqual('initial@test.com')
 	})
 
+	test('PUT ./user error creating user without auth header', async () => {
+		storage.users = [new TestUser({})]
+		const result = await request(app)
+			.put('/api/v1/user')
+			.send('name=initial&email=initial@test.com&password=passwd')
+
+		expect(result.status).toBe(401)
+	})
+
 	test('GET ./ without potential account creation', async () => {
 		const result = await request(app)
 			.get('/api/v1/user')
