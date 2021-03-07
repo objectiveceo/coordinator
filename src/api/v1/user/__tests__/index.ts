@@ -94,7 +94,7 @@ describe('/api/v1/user tests', () => {
 		expect(result.body.canCreateInitialUser).toBe(true)
 	})
 
-	test('PUT ./user account creation', async () => {
+	test('PUT ./user without potential account creation', async () => {
 		storage.users = [new TestUser({})]
 		const result = await request(app)
 			.get('/api/v1/user')
