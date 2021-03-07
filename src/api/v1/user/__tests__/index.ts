@@ -128,7 +128,7 @@ describe('/api/v1/user tests', () => {
 		const user = { name: 'test', email: 'test@test.com' }
 		const token = jsonwebtoken.sign({ user }, await seedProvider.generateAccessTokenSeed(user))
 
-		storage.users = [new TestUser({})]
+		storage.users = [new TestUser(user)]
 		const result = await request(app)
 			.put('/api/v1/user')
 			.set('Authorization', `Bearer ${token}`)
@@ -143,7 +143,7 @@ describe('/api/v1/user tests', () => {
 		const user = { name: 'test', email: 'test@test.com' }
 		const token = jsonwebtoken.sign({ user }, await seedProvider.generateAccessTokenSeed(user))
 
-		storage.users = [new TestUser({})]
+		storage.users = [new TestUser(user)]
 		const result = await request(app)
 			.put('/api/v1/user')
 			.set('Authorization', `Bearer ${token}`)
