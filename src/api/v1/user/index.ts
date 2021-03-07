@@ -49,8 +49,7 @@ async function index(request: core.Request, response: core.Response, storage: Us
 		return
 	}
 
-	const payload = await getJWTPayload(authHeader, seedProvider)
-	response.json(payload)
+	response.json(await getJWTPayload(authHeader, seedProvider))
 }
 
 async function login(request: core.Request, response: core.Response, storage: UserStorage, seedProvider: JWTSeedProvider, seedExpirationGenerator: SeedExpirationGenerator) {
