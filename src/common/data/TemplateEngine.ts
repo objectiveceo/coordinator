@@ -12,7 +12,11 @@ enum TemplateKey {
 	FrontPage = 'front-page',
 }
 
-const markdown = new MarkdownIt()
+const markdown = new MarkdownIt({
+	html: true,
+	linkify: true,
+	typographer: true,
+});
 
 export default class TemplateEngine {
 	templates: Templates
