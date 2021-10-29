@@ -15,7 +15,6 @@ enum TemplateKey {
 const markdown = new MarkdownIt({
 	html: true,
 	linkify: true,
-	typographer: true,
 });
 
 export default class TemplateEngine {
