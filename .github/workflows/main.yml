@@ -1,57 +1,57 @@
-name: Build and deploy
+# name: Build and deploy
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: [ main ]
+#   workflow_dispatch:
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: 'recursive'
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
+#         with:
+#           submodules: 'recursive'
         
-      - uses: actions/checkout@v2
-        with:
-          repository: objectiveceo/devops
-          ref: refs/heads/main
-          path: ./__devops
+#       - uses: actions/checkout@v2
+#         with:
+#           repository: objectiveceo/devops
+#           ref: refs/heads/main
+#           path: ./__devops
       
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_KEY" > ~/.ssh/staging.key
-          chmod 600 ~/.ssh/staging.key
-          cat >>~/.ssh/config <<END
-          Host staging
-            HostName $SSH_HOST
-            User $SSH_USER
-            IdentityFile ~/.ssh/staging.key
-            StrictHostKeyChecking no
-          END
-        env:
-          SSH_USER: ${{ secrets.STAGING_SSH_USER }}
-          SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
-          SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
+#       - name: Configure SSH
+#         run: |
+#           mkdir -p ~/.ssh/
+#           echo "$SSH_KEY" > ~/.ssh/staging.key
+#           chmod 600 ~/.ssh/staging.key
+#           cat >>~/.ssh/config <<END
+#           Host staging
+#             HostName $SSH_HOST
+#             User $SSH_USER
+#             IdentityFile ~/.ssh/staging.key
+#             StrictHostKeyChecking no
+#           END
+#         env:
+#           SSH_USER: ${{ secrets.STAGING_SSH_USER }}
+#           SSH_KEY: ${{ secrets.STAGING_SSH_KEY }}
+#           SSH_HOST: ${{ secrets.STAGING_SSH_HOST }}
     
-      - name: Configure verification file
-        run: |
-          cat >>__verify <<END
-          http://objectiveceo.com 200
-          http://objectiveceo.com/api/v1/info 200
-          END
+#       - name: Configure verification file
+#         run: |
+#           cat >>__verify <<END
+#           http://objectiveceo.com 200
+#           http://objectiveceo.com/api/v1/info 200
+#           END
 
-      - name: Build and deploy
-        run: __devops/bin/full-build-and-deploy.sh
-        env:
-          ADDITIONAL_DOCKER_FLAGS: "--publish 8000:8000 --volume ${{ secrets.DATA_DIRECTORY }}:/data"
-          BUILD_NUMBER: ${{ github.run_number }}
-          DATABASE_PATH: /data/data.sqlite
-          OUTPUT_DIR: __build
-          SSH_IMAGE_DESTINATION: staging:staging/
-          VERIFY_FILE: __verify
+#       - name: Build and deploy
+#         run: __devops/bin/full-build-and-deploy.sh
+#         env:
+#           ADDITIONAL_DOCKER_FLAGS: "--publish 8000:8000 --volume ${{ secrets.DATA_DIRECTORY }}:/data"
+#           BUILD_NUMBER: ${{ github.run_number }}
+#           DATABASE_PATH: /data/data.sqlite
+#           OUTPUT_DIR: __build
+#           SSH_IMAGE_DESTINATION: staging:staging/
+#           VERIFY_FILE: __verify
       
-      - name: Sync static folder
-        run: rsync --archive static --exclude ".*" staging:~/objectiveceo/static/
+#       - name: Sync static folder
+#         run: rsync --archive static --exclude ".*" staging:~/objectiveceo/static/
